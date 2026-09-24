@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeChat</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#f7f5ef;
+  --card:#ffffff;
+  --text:#171717;
+  --muted:#777;
+  --line:#e9e5dc;
+  --accent:#7357ff;
+  --online:#2dcc70;
+}
+
+body{
+  margin:0;
+  background:#ddd;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:480px;
+  margin:auto;
+  min-height:100vh;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+
+/* HEADER */
+
+header{
+  padding:18px 18px 8px;
+  background:var(--bg);
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+}
+
+.iconbtn{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:white;
+  font-size:20px;
+}
+
+.search{
+  margin-top:14px;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:12px 14px;
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+
+.search input{
+  border:0;
+  outline:0;
+  width:100%;
+  background:transparent;
+}
+
+.tabs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-top:13px;
+}
+
+.tab{
+  padding:11px 5px;
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.tab.active{
+  background:#171717;
+  color:white;
+}
+
+/* MAIN */
+
+main{
+  padding:10px 16px 90px;
+}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px 2px 12px;
+}
+
+.section-title h2{
+  font-size:17px;
+  margin:0;
+}
+
+.small{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* FAVORITES */
+
+.favorites{
+  display:flex;
+  gap:13px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.favorites::-webkit-scrollbar{
+  display:none;
+}
+
+.fav{
+  min-width:62px;
+  text-align:center;
+}
+
+.avatar{
+  position:relative;
+  width:54px;
+  height:54px;
+  margin:auto;
+}
+
+.letter{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ddd;
+  font-weight:800;
+  font-size:20px;
+}
+
+.dot{
+  position:absolute;
+  right:-1px;
+  bottom:2px;
+  width:14px;
+  height:14px;
+  background:var(--online);
+  border:3px solid var(--bg);
+  border-radius:50%;
+}
+
+.fav span{
+  display:block;
+  font-size:11px;
+  margin-top:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* CHAT LIST */
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.chat{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:11px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.chatinfo{
+  flex:1;
+  min-width:0;
+}
+
+.chatname{
+  font-weight:800;
+}
+
+.preview{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.time{
+  font-size:10px;
+  color:var(--muted);
+  align-self:flex-start;
+}
+
+.badge{
+  background:var(--accent);
+  color:white;
+  border-radius:20px;
+  font-size:10px;
+  padding:3px 7px;
+  margin-top:7px;
+}
+
+/* PAGES */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+/* ONLINE */
+
+.online-grid,
+.groups{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.person,
+.group{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.person-info,
+.group-info{
+  flex:1;
+}
+
+.person-info b,
+.group-info b{
+  display:block;
+}
+
+.status{
+  font-size:11px;
+  color:var(--online);
+  margin-top:4px;
+}
+
+/* BUTTONS */
+
+.action{
+  padding:9px 13px;
+  border-radius:12px;
+  background:#eee;
+  color:#222;
+  font-weight:700;
+}
+
+.action.primary{
+  background:var(--accent);
+  color:white;
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:45px 15px;
+}
+
+/* FLOATING BUTTON */
+
+.fab{
+  position:fixed;
+  bottom:78px;
+  right:18px;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:var(--accent);
+  color:white;
+  font-size:27px;
+  box-shadow:0 8px 25px #7357ff55;
+  z-index:8;
+}
+
+/* BOTTOM NAV */
+
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:480px;
+  background:white;
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:7px 8px;
+  z-index:7;
+}
+
+.nav{
+  background:transparent;
+  color:#999;
+  padding:7px 2px;
+  font-size:11px;
+}
+
+.nav.active{
+  color:var(--accent);
+  font-weight:800;
+}
+
+.nav div{
+  font-size:19px;
+  margin-bottom:2px;
+}
+
+/* MODALS */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0007;
+  display:none;
+  align-items:flex-end;
+  z-index:20;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.sheet{
+  width:100%;
+  max-width:480px;
+  margin:auto;
+  background:var(--bg);
+  border-radius:22px 22px 0 0;
+  max-height:90vh;
+  overflow:auto;
+  padding:18px;
+}
+
+.sheet h2{
+  margin:0 0 14px;
+}
+
+.close{
+  float:right;
+  background:white;
+  border-radius:50%;
+  width:34px;
+  height:34px;
+}
+
+.field{
+  background:white;
+  border:1px solid var(--line);
+  padding:12px;
+  border-radius:13px;
+  width:100%;
+  outline:0;
+  margin-bottom:10px;
+}
+
+/* CHAT */
+
+.chat-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px;
+  background:white;
+  border-bottom:1px solid var(--line);
+}
+
+.chat-head .avatar{
+  width:42px;
+  height:42px;
+}
+
+.chat-head .letter{
+  width:42px;
+  height:42px;
+}
+
+.messages{
+  height:60vh;
+  overflow:auto;
+  padding:15px;
+  background:#f1efe8;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.msg{
+  max-width:78%;
+  padding:10px 12px;
+  border-radius:15px;
+  background:white;
+  align-self:flex-start;
+}
+
+.msg.mine{
+  background:var(--accent);
+  color:white;
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+
+.msg small{
+  display:block;
+  opacity:.6;
+  font-size:9px;
+  text-align:right;
+  margin-top:4px;
+}
+
+.composer{
+  display:flex;
+  gap:7px;
+  padding:10px;
+  background:white;
+}
+
+.composer input{
+  flex:1;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:11px;
+  outline:0;
+}
+
+.round{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#eee;
+}
+
+.send{
+  background:var(--accent);
+  color:white;
+}
+
+/* PROFILE */
+
+.profile-card{
+  text-align:center;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:25px;
+}
+
+.profile-card .avatar{
+  width:86px;
+  height:86px;
+}
+
+.profile-card .letter{
+  width:86px;
+  height:86px;
+  font-size:30px;
+}
+
+.profile-card h2{
+  margin:10px 0 3px;
+}
+
+.profile-card p{
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:88px;
+  transform:translateX(-50%) translateY(20px);
+  background:#171717;
+  color:white;
+  padding:10px 15px;
+  border-radius:12px;
+  font-size:12px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:50;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<div class="top">
+
+<div class="logo">
+VibeChat
+</div>
+
+<button class="iconbtn" onclick="openProfile()">
+👤
+</button>
+
+</div>
+
+<div class="search">
+
+🔍
+
+<input
+id="searchInput"
+placeholder="Search chats, people or groups"
+oninput="renderAll()">
+
+</div>
+
+<div class="tabs">
+
+<button
+class="tab active"
+data-page="messages"
+onclick="showPage('messages')">
+Messages
+</button>
+
+<button
+class="tab"
+data-page="online"
+onclick="showPage('online')">
+Online
+</button>
+
+<button
+class="tab"
+data-page="groups"
+onclick="showPage('groups')">
+Groups
+</button>
+
+</div>
+
+</header>
+
+
+<main>
+
+<!-- MESSAGES -->
+
+<section
+id="messages"
+class="page active">
+
+<div class="section-title">
+
+<h2>
+Favorites
+</h2>
+
+<span class="small">
+See all
+</span>
+
+</div>
+
+<div
+id="favorites"
+class="favorites">
+</div>
+
+
+<div class="section-title">
+
+<h2>
+Recent chats
+</h2>
+
+<span
+class="small"
+id="chatCount">
+</span>
+
+</div>
+
+<div
+id="chatList"
+class="list">
+</div>
+
+</section>
+
+
+<!-- ONLINE -->
+
+<section
+id="online"
+class="page">
+
+<div class="section-title">
+
+<h2>
+People online
+</h2>
+
+<span class="small">
+Live
+</span>
+
+</div>
+
+<div
+id="onlineList"
+class="online-grid">
+</div>
+
+</section>
+
+
+<!-- GROUPS -->
+
+<section
+id="groups"
+class="page">
+
+<div class="section-title">
+
+<h2>
+Your groups
+</h2>
+
+<button
+class="action primary"
+onclick="openGroup()">
+＋ Group
+</button>
+
+</div>
+
+<div
+id="groupList"
+class="groups">
+</div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section
+id="profile"
+class="page">
+
+<div class="section-title">
+
+<h2>
+Profile
+</h2>
+
+</div>
+
+<div class="profile-card">
+
+<div class="avatar">
+
+<div class="letter">
+L
+</div>
+
+</div>
+
+<h2>
+Lewis
+</h2>
+
+<p>
+@lewis • Kenya
+</p>
+
+<button
+class="action primary"
+onclick="changeName()">
+Edit profile
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- NEW CHAT BUTTON -->
+
+<button
+class="fab"
+onclick="openNewChat()">
+＋
+</button>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom">
+
+<button
+class="nav active"
+data-page="messages"
+onclick="showPage('messages')">
+
+<div>
+💬
+</div>
+
+Chats
+
+</button>
+
+
+<button
+class="nav"
+data-page="online"
+onclick="showPage('online')">
+
+<div>
+🟢
+</div>
+
+Online
+
+</button>
+
+
+<button
+class="nav"
+data-page="groups"
+onclick="showPage('groups')">
+
+<div>
+👥
+</div>
+
+Groups
+
+</button>
+
+
+<button
+class="nav"
+data-page="profile"
+onclick="showPage('profile')">
+
+<div>
+👤
+</div>
+
+Profile
+
+</button>
+
+</nav>
+
+
+<!-- CHAT WINDOW -->
+
+<div
+id="chatModal"
+class="modal">
+
+<div
+class="sheet"
+style="padding:0">
+
+<div class="chat-head">
+
+<button
+class="close"
+onclick="closeModal('chatModal')">
+←
+</button>
+
+<div
+id="chatAvatar"
+class="avatar">
+</div>
+
+<div style="flex:1">
+
+<b id="chatName">
+</b>
+
+<div
+id="chatStatus"
+class="small">
+</div>
+
+</div>
+
+<button
+class="iconbtn"
+onclick="toast('Voice call demo')">
+📞
+</button>
+
+</div>
+
+
+<div
+id="messagesBox"
+class="messages">
+</div>
+
+
+<div class="composer">
+
+<button
+class="round"
+onclick="pickImage()">
+📷
+</button>
+
+<input
+id="messageInput"
+placeholder="Write a message..."
+onkeydown="if(event.key==='Enter')sendMessage()">
+
+<button
+class="round"
+onclick="toast('Voice message demo')">
+🎤
+</button>
+
+<button
+class="round send"
+onclick="sendMessage()">
+➤
+</button>
+
+<input
+id="imagePicker"
+type="file"
+accept="image/*"
+hidden
+onchange="sendImage(event)">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- NEW CHAT -->
+
+<div
+id="newModal"
+class="modal">
+
+<div class="sheet">
+
+<button
+class="close"
+onclick="closeModal('newModal')">
+×
+</button>
+
+<h2>
+New chat
+</h2>
+
+<input
+id="newName"
+class="field"
+placeholder="Person's name">
+
+<input
+id="newText"
+class="field"
+placeholder="First message (optional)">
+
+<button
+class="action primary"
+style="width:100%"
+onclick="createChat()">
+
+Start chat
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- NEW GROUP -->
+
+<div
+id="groupModal"
+class="modal">
+
+<div class="sheet">
+
+<button
+class="close"
+onclick="closeModal('groupModal')">
+×
+</button>
+
+<h2>
+Create group
+</h2>
+
+<input
+id="groupName"
+class="field"
+placeholder="Group name">
+
+<input
+id="groupDesc"
+class="field"
+placeholder="Description">
+
+<button
+class="action primary"
+style="width:100%"
+onclick="createGroup()">
+
+Create group
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- PROFILE -->
+
+<div
+id="profileModal"
+class="modal">
+
+<div class="sheet">
+
+<button
+class="close"
+onclick="closeModal('profileModal')">
+×
+</button>
+
+<h2>
+Profile
+</h2>
+
+<input
+id="profileName"
+class="field"
+placeholder="Your name">
+
+<button
+class="action primary"
+style="width:100%"
+onclick="saveProfile()">
+
+Save
+
+</button>
+
+</div>
+
+</div>
+
+
+<div
+id="toast"
+class="toast">
+</div>
+
+</div>
+
+
+<script>
+
+const defaultPeople = [
+
+{
+id:1,
+name:"Luna",
+status:"Online",
+favorite:true,
+messages:[
+{
+text:"Hey! 👋",
+mine:false,
+time:"14:32"
+},
+{
+text:"Hi Luna!",
+mine:true,
+time:"14:33"
+}
+]
+},
+
+{
+id:2,
+name:"Brian",
+status:"Online",
+favorite:true,
+messages:[
+{
+text:"Are we playing football today?",
+mine:false,
+time:"13:10"
+}
+]
+},
+
+{
+id:3,
+name:"Amina",
+status:"Online",
+favorite:true,
+messages:[
+{
+text:"That video was amazing 😂",
+mine:false,
+time:"12:45"
+}
+]
+},
+
+{
+id:4,
+name:"Kevin",
+status:"Last seen 10m ago",
+favorite:false,
+messages:[
+{
+text:"See you later.",
+mine:false,
+time:"11:20"
+}
+]
+},
+
+{
+id:5,
+name:"Sarah",
+status:"Online",
+favorite:false,
+messages:[
+{
+text:"Good morning!",
+mine:false,
+time:"09:02"
+}
+]
+}
+
+];
+
+
+let people =
+JSON.parse(localStorage.getItem("vibePeople"))
+|| defaultPeople;
+
+
+let groups =
+JSON.parse(localStorage.getItem("vibeGroups"))
+|| [
+
+{
+id:1,
+name:"Football Team",
+desc:"School football friends",
+members:12
+},
+
+{
+id:2,
+name:"Coding Club",
+desc:"Build apps together",
+members:8
+}
+
+];
+
+
+let profile =
+JSON.parse(localStorage.getItem("vibeProfile"))
+|| {
+name:"Lewis"
+};
+
+
+let current = null;
+
+
+function save(){
+
+localStorage.setItem(
+"vibePeople",
+JSON.stringify(people)
+);
+
+localStorage.setItem(
+"vibeGroups",
+JSON.stringify(groups)
+);
+
+localStorage.setItem(
+"vibeProfile",
+JSON.stringify(profile)
+);
+
+}
+
+
+function avatarHTML(p){
+
+return `
+
+<div class="avatar">
+
+<div class="letter">
+${(p.name || "?")[0].toUpperCase()}
+</div>
+
+${p.status === "Online"
+? '<i class="dot"></i>'
+: ''}
+
+</div>
+
+`;
+
+}
+
+
+function showPage(id){
+
+document
+.querySelectorAll(".page")
+.forEach(x =>
+x.classList.toggle(
+"active",
+x.id === id
+)
+);
+
+document
+.querySelectorAll(".tab,.nav")
+.forEach(x =>
+x.classList.toggle(
+"active",
+x.dataset.page === id
+)
+);
+
+}
+
+
+function renderAll(){
+
+const q =
+(document.getElementById("searchInput").value || "")
+.toLowerCase();
+
+
+const filtered =
+people.filter(p =>
+(p.name + " " +
+(p.messages.at(-1)?.text || ""))
+.toLowerCase()
+.includes(q)
+);
+
+
+document.getElementById("favorites").innerHTML =
+
+people
+.filter(p => p.favorite)
+.map(p => `
+
+<div
+class="fav"
+onclick="openChat(${p.id})">
+
+${avatarHTML(p)}
+
+<span>
+${p.name}
+</span>
+
+</div>
+
+`)
+.join("");
+
+
+document.getElementById("chatList").innerHTML =
+
+filtered.map(p => {
+
+const last =
+p.messages.at(-1)
+|| {
+text:"No messages yet",
+time:""
+};
+
+return `
+
+<div
+class="chat"
+onclick="openChat(${p.id})">
+
+${avatarHTML(p)}
+
+<div class="chatinfo">
+
+<div class="chatname">
+${p.name}
+</div>
+
+<div class="preview">
+${last.text}
+</div>
+
+</div>
+
+<div class="time">
+${last.time}
+</div>
+
+</div>
+
+`;
+
+}).join("")
+||
+'<div class="empty">No chats found.</div>';
+
+
+document.getElementById("chatCount")
+.textContent =
+filtered.length + " chats";
+
+
+document.getElementById("onlineList").innerHTML =
+
+people
+.filter(p =>
+p.status === "Online" &&
+p.name.toLowerCase().includes(q)
+)
+.map(p => `
+
+<div class="person">
+
+${avatarHTML(p)}
+
+<div class="person-info">
+
+<b>
+${p.name}
+</b>
+
+<div class="status">
+● Online now
+</div>
+
+</div>
+
+<button
+class="action primary"
+onclick="openChat(${p.id})">
+
+Message
+
+</button>
+
+</div>
+
+`)
+.join("")
+||
+'<div class="empty">Nobody found.</div>';
+
+
+document.getElementById("groupList").innerHTML =
+
+groups
+.filter(g =>
+(g.name + " " + g.desc)
+.toLowerCase()
+.includes(q)
+)
+.map(g => `
+
+<div class="group">
+
+<div class="avatar">
+
+<div class="letter">
+👥
+</div>
+
+</div>
+
+<div class="group-info">
+
+<b>
+${g.name}
+</b>
+
+<span class="small">
+${g.desc} • ${g.members} members
+</span>
+
+</div>
+
+<button
+class="action"
+onclick="toast('Joined ${g.name}')">
+
+Open
+
+</button>
+
+</div>
+
+`)
+.join("");
+
+}
+
+
+function openChat(id){
+
+current =
+people.find(p => p.id === id);
+
+if(!current) return;
+
+
+document.getElementById("chatName")
+.textContent =
+current.name;
+
+
+document.getElementById("chatStatus")
+.textContent =
+current.status;
+
+
+document.getElementById("chatAvatar")
+.innerHTML =
+avatarHTML(current);
+
+
+renderMessages();
+
+
+document
+.getElementById("chatModal")
+.classList.add("show");
+
+}
+
+
+function renderMessages(){
+
+const box =
+document.getElementById("messagesBox");
+
+
+box.innerHTML =
+
+current.messages.map(m => `
+
+<div class="msg ${m.mine ? "mine" : ""}">
+
+${m.text}
+
+<small>
+${m.time}
+</small>
+
+</div>
+
+`).join("");
+
+
+box.scrollTop =
+box.scrollHeight;
+
+}
+
+
+function sendMessage(){
+
+const input =
+document.getElementById("messageInput");
+
+const text =
+input.value.trim();
+
+
+if(!text || !current)
+return;
+
+
+current.messages.push({
+
+text:text,
+mine:true,
+time:new Date().toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)
+
+});
+
+
+input.value="";
+
+save();
+
+renderMessages();
+
+renderAll();
+
+
+setTimeout(() => {
+
+current.messages.push({
+
+text:"Got it 👍",
+mine:false,
+time:new Date().toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)
+
+});
+
+save();
+
+renderMessages();
+
+renderAll();
+
+},700);
+
+}
+
+
+function pickImage(){
+
+document
+.getElementById("imagePicker")
+.click();
+
+}
+
+
+function sendImage(e){
+
+const file =
+e.target.files[0];
+
+if(!file || !current)
+return;
+
+
+current.messages.push({
+
+text:"📷 " + file.name,
+mine:true,
+time:"now"
+
+});
+
+
+save();
+
+renderMessages();
+
+toast("Photo added to the chat");
+
+}
+
+
+function openNewChat(){
+
+document
+.getElementById("newModal")
+.classList.add("show");
+
+}
+
+
+function createChat(){
+
+const name =
+document
+.getElementById("newName")
+.value
+.trim();
+
+
+if(!name){
+
+toast("Enter a name");
+
+return;
+
+}
+
+
+const text =
+document
+.getElementById("newText")
+.value
+.trim();
+
+
+const person = {
+
+id:Date.now(),
+
+name:name,
+
+status:"Online",
+
+favorite:false,
+
+messages:
+text
+?
+[
+{
+text:text,
+mine:true,
+time:"now"
+}
+]
+:
+[]
+
+};
+
+
+people.unshift(person);
+
+save();
+
+closeModal("newModal");
+
+renderAll();
+
+openChat(person.id);
+
+
+document.getElementById("newName").value="";
+
+document.getElementById("newText").value="";
+
+}
+
+
+function openGroup(){
+
+document
+.getElementById("groupModal")
+.classList.add("show");
+
+}
+
+
+function createGroup(){
+
+const name =
+document
+.getElementById("groupName")
+.value
+.trim();
+
+
+if(!name){
+
+toast("Enter a group name");
+
+return;
+
+}
+
+
+const desc =
+document
+.getElementById("groupDesc")
+.value
+.trim()
+||
+"New group";
+
+
+groups.unshift({
+
+id:Date.now(),
+
+name:name,
+
+desc:desc,
+
+members:1
+
+});
+
+
+save();
+
+closeModal("groupModal");
+
+renderAll();
+
+showPage("groups");
+
+toast("Group created");
+
+
+document.getElementById("groupName").value="";
+
+document.getElementById("groupDesc").value="";
+
+}
+
+
+function openProfile(){
+
+document
+.getElementById("profileName")
+.value =
+profile.name;
+
+
+document
+.getElementById("profileModal")
+.classList.add("show");
+
+}
+
+
+function saveProfile(){
+
+const n =
+document
+.getElementById("profileName")
+.value
+.trim();
+
+
+if(n)
+profile.name=n;
+
+
+save();
+
+closeModal("profileModal");
+
+toast("Profile saved");
+
+}
+
+
+function changeName(){
+
+openProfile();
+
+}
+
+
+function closeModal(id){
+
+document
+.getElementById(id)
+.classList.remove("show");
+
+}
+
+
+function toast(t){
+
+const x =
+document.getElementById("toast");
+
+x.textContent=t;
+
+x.classList.add("show");
+
+setTimeout(() => {
+
+x.classList.remove("show");
+
+},1800);
+
+}
+
+
+renderAll();
+
+</script>
+
+</body>
+  </html>
